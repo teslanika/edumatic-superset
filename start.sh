@@ -3,6 +3,9 @@ set -e
 
 echo "🚀 Initializing Superset..."
 
+# Wait for database to be ready
+sleep 5
+
 # Upgrade database
 superset db upgrade
 
@@ -19,11 +22,14 @@ superset init
 
 echo "✅ Superset initialized!"
 
-# Start server
+# Start server (Railway предоставляет PORT)
+PORT=${PORT:-8088}
 gunicorn \
-    --bind 0.0.0.0:8088 \
-    --workers 4 \
+    --bind 0.0.0.0:$PORT \
+    --workers 2 \
     --timeout 300 \
     --limit-request-line 0 \
     --limit-request-field_size 0 \
+    --access-logfile - \
+    --error-logfile - \
     "superset.app:create_app()"
