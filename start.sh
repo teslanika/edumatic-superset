@@ -24,7 +24,9 @@ echo "✅ Superset initialized!"
 
 # Start server (Railway предоставляет PORT)
 PORT=${PORT:-8088}
-gunicorn \
+echo "🚀 Starting Gunicorn on port $PORT..."
+
+exec gunicorn \
     --bind 0.0.0.0:$PORT \
     --workers 2 \
     --timeout 300 \
@@ -32,4 +34,5 @@ gunicorn \
     --limit-request-field_size 0 \
     --access-logfile - \
     --error-logfile - \
+    --log-level info \
     "superset.app:create_app()"
